@@ -1,46 +1,54 @@
 "use client";
 
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
-import { useStoreModal } from '@/hooks/use-store-modal';
+import { useStoreModal } from "@/hooks/use-store-modal";
 import { Modal } from "@/components/ui/modal";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import axios from 'axios';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const formSchema = z.object({
-  name: z.string().min(1)
-})
+  name: z.string().min(1),
+});
 
 export const StoreModal = () => {
-  const storeModal = useStoreModal()
+  const storeModal = useStoreModal();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: ""
-    }
+      name: "",
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const response = await axios.post("/api/stores", values)
+      const response = await axios.post("/api/stores", values);
 
-      console.log(response.data)
-    } catch {
-
+      toast.success("Stroe created.");
+    } catch (error) {
+      toast.error("Something went wrong.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Modal
@@ -59,10 +67,10 @@ export const StoreModal = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input 
-                      disabled={loading} 
+                    <Input
+                      disabled={loading}
                       placeholder="E-Commerce"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -73,12 +81,11 @@ export const StoreModal = () => {
               <Button
                 disabled={loading}
                 variant="outline"
-                onClick={storeModal.onClose}>
+                onClick={storeModal.onClose}
+              >
                 Cancel
               </Button>
-              <Button 
-                disabled={loading}
-                type="submit">
+              <Button disabled={loading} type="submit">
                 Continue
               </Button>
             </div>
@@ -86,5 +93,5 @@ export const StoreModal = () => {
         </Form>
       </div>
     </Modal>
-  )
-}
+  );
+};
